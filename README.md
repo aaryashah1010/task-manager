@@ -32,7 +32,5 @@ A full-stack task management web application built using the **MERN stack (Mongo
 - Bcrypt for password hashing
 - dotenv for environment management
 
----
 
-## 📁 Folder Structure
 
