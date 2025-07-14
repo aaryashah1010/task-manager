@@ -94,7 +94,7 @@ const UserDashboard = () => {
           <div className='grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full mb-8'>
             <InfoCard
               label="Total Tasks"
-              value={addThousandSeparator(dashboardData?.charts?.taskDistribution?.All || 0)}
+              value={addThousandSeparator(dashboardData?.statistics?.totalTasks|| 0)}
               color="bg-blue-500"
             />
             <InfoCard

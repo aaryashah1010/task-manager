@@ -385,7 +385,7 @@
                     dueDate:{$lt:new Date()}
                 })
                 //Task distribution by status
-                const taskStatuses=["Pendind","In Progress","Completed"];
+                const taskStatuses=["Pending","In Progress","Completed"];
                 const tasksDistributionRaw=await Task.aggregate([
                     {$match:{assignedTo:userId}},
                     {$group:{_id:"$status",count:{$sum:1}}},
