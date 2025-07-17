@@ -409,7 +409,7 @@
                     return acc;
                 }, {});
                 //fetch recent 10
-                const recentTasks=await Task.find()
+                const recentTasks=await Task.find({ assignedTo: userId })
                 .sort({createdAt:-1})
                 .limit(10)
                 .select("title status priority dueDate createdAt");

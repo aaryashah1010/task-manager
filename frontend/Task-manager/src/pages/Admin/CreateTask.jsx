@@ -24,7 +24,7 @@ const CreateTask = () => {
     priority: "Low",
     dueDate: "",
     assignedTo: [],
-    todoCheckList: [],
+    todoChecklist: [],
     attachments: [],
   });
 
@@ -43,7 +43,7 @@ const CreateTask = () => {
       priority: "Low",
       dueDate: "",
       assignedTo: [],
-      todoCheckList: [],
+      todoChecklist: [],
       attachments: [],
     });
   };
@@ -51,15 +51,15 @@ const CreateTask = () => {
   const createTask = async () => {
     setLoading(true);
     try {
-      const todoList = taskData.todoCheckList?.map((item) => ({
-        text: item,
-        completed: false,
+      const todoList = taskData.todoChecklist?.map((item) => ({
+        text: item.text,
+        completed: item.completed || false,
       }));
 
       await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
-        todoCheckList: todoList,
+        todoChecklist: todoList,
       });
 
       toast.success("Task created successfully");
@@ -74,9 +74,9 @@ const CreateTask = () => {
  const updateTask = async () => {
   setLoading(true);
   try {
-    const todolist = taskData.todoCheckList?.map((item, index) => ({
-      text: item,
-      completed: false, // or use taskData.todoCheckList[index].completed if needed
+    const todoList = taskData.todoChecklist?.map((item) => ({
+      text: item.text,
+      completed: item.completed || false,
     }));
 
     await axiosInstance.put(
@@ -84,7 +84,7 @@ const CreateTask = () => {
       {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
-        todoCheckList: todolist,
+        todoChecklist: todoList,
       }
     );
     toast.success("Task Updated Successfully");
@@ -116,7 +116,7 @@ const CreateTask = () => {
       setError("Task not assigned to any member");
       return;
     }
-    if (taskData.todoCheckList?.length === 0) {
+    if (taskData.todoChecklist?.length === 0) {
       setError("Add at least one checklist item");
       return;
     }
@@ -141,7 +141,7 @@ const getTaskDetailsById = async () => {
     ? new Date(taskInfo.dueDate).toISOString().split("T")[0]
     : "",
   assignedTo: taskInfo?.assignedTo?.map((item) => item?._id) || [],
-  todoCheckList: taskInfo?.todoCheckList?.map((item) => item?.text) || [],
+  todoChecklist: taskInfo?.todoChecklist || [],
   attachments: taskInfo.attachments || [],
 }); 
     }
@@ -242,8 +242,8 @@ const getTaskDetailsById = async () => {
               <div className='mt-3'>
                 <label className='text-xs font-medium text-slate-600'>TODO Checklist</label>
                 <TodoListInput
-                  todoList={taskData.todoCheckList}
-                  setTodoList={(value) => handleValueChange("todoCheckList", value)}
+                  todoList={taskData.todoChecklist}
+                  setTodoList={(value) => handleValueChange("todoChecklist", value)}
                 />
               </div>
 

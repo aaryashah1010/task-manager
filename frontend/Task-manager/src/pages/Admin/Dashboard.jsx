@@ -83,7 +83,7 @@ const UserDashboard = () => {
           {/* Header */}
           <div className='mb-8'>
             <h2 className='text-2xl md:text-3xl font-medium text-black'>
-              Good Morning! {user?.name}
+              Hello! {user?.name}
             </h2>
             <p className='text-sm md:text-base text-gray-400 mt-2'>
               {moment().format("dddd Do MMM YYYY")}
