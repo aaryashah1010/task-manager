@@ -8,6 +8,8 @@ const {
   getUserProfile,
   updateUserProfile,
 } = require("../controllers/authController");
+const cors = require('cors');
+router.use(cors());
 
 // 🔐 Import middleware for authentication
 const { protect, adminOnly } = require("../middlewares/authMiddleware.js");

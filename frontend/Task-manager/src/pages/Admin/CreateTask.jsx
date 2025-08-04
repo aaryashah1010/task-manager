@@ -1,5 +1,5 @@
 // CreateTask.jsx
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import DashboardLayout from '../../components/layout/DashboardLayout'
 import { PRIORITY_DATA } from '../../utils/data'
 import axiosInstance from '../../utils/axiosInstance'
@@ -171,6 +171,30 @@ const getTaskDetailsById = async () => {
     }
   },[taskId])
 
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const [listening, setListening] = useState({ title: false, description: false });
+  const recognitionRef = useRef(null);
+
+  const handleVoiceInput = (field) => {
+    if (!SpeechRecognition) {
+      alert("Speech Recognition is not supported in this browser.");
+      return;
+    }
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.lang = 'en-US';
+    }
+    recognitionRef.current.onstart = () => setListening((prev) => ({ ...prev, [field]: true }));
+    recognitionRef.current.onend = () => setListening((prev) => ({ ...prev, [field]: false }));
+    recognitionRef.current.onerror = () => setListening((prev) => ({ ...prev, [field]: false }));
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      handleValueChange(field, transcript);
+    };
+    recognitionRef.current.start();
+  };
+
   return (
     <div>
       <DashboardLayout activeMenu="Create Task">
@@ -191,25 +215,41 @@ const getTaskDetailsById = async () => {
                 )}
               </div>
 
-              <div className='mt-4'>
+              <div className='mt-4 flex items-center gap-2'>
                 <label className='text-xs font-medium text-slate-600'>Task Title</label>
-                <input
-                  placeholder='Create APP UI'
-                  className='form-input'
-                  value={taskData.title || ""}
-                  onChange={({ target }) => handleValueChange("title", target.value)} />
+                <button
+                  type="button"
+                  onClick={() => handleVoiceInput("title")}
+                  className={`ml-2 p-1 rounded-full ${listening.title ? "bg-green-200" : "bg-gray-200"}`}
+                  title="Speak to fill"
+                >
+                  🎤
+                </button>
               </div>
+              <input
+                placeholder='Create APP UI'
+                className='form-input'
+                value={taskData.title || ""}
+                onChange={({ target }) => handleValueChange("title", target.value)} />
 
-              <div className='mt-3'>
+              <div className='mt-3 flex items-center gap-2'>
                 <label className='text-xs font-medium text-slate-600'>Description</label>
-                <textarea
-                  placeholder='Describe Task'
-                  className='form-input'
-                  rows={4}
-                  value={taskData.description || ""}
-                  onChange={({ target }) => handleValueChange("description", target.value)}
-                />
+                <button
+                  type="button"
+                  onClick={() => handleVoiceInput("description")}
+                  className={`ml-2 p-1 rounded-full ${listening.description ? "bg-green-200" : "bg-gray-200"}`}
+                  title="Speak to fill"
+                >
+                  🎤
+                </button>
               </div>
+              <textarea
+                placeholder='Describe Task'
+                className='form-input'
+                rows={4}
+                value={taskData.description || ""}
+                onChange={({ target }) => handleValueChange("description", target.value)}
+              />
 
               <div className='mt-3'>
                 <label className='text-xs font-medium text-slate-600'>Priority</label>
@@ -273,14 +313,14 @@ const getTaskDetailsById = async () => {
         </div>
 
         <Model
-  isOpen={openDeleteAlert} // ✅ correct — pass the actual boolean state
-  onClose={() => setOpenDeleteAlert(false)}
-  title="Delete Task"
->
-           <DeleteAlert
+          isOpen={openDeleteAlert}
+          onClose={() => setOpenDeleteAlert(false)}
+          title="Delete Task"
+        >
+          <DeleteAlert
             content="Are you sure you want to delete this task?"
-            onDelete={()=>deleteTask()}
-            />
+            onDelete={() => deleteTask()}
+          />
         </Model>
       </DashboardLayout>
     </div>

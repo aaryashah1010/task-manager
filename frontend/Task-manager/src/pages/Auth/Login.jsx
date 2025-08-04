@@ -34,6 +34,12 @@ const Login = () => {
       const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
         email,
         password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*', // Allow all origins
+        },
+        timeout: 10000, // Set timeout to 10 seconds  
       });
 
       const { token, role } = response.data;

@@ -22,8 +22,14 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // Middleware to handle CORS
 app.use(
   cors({
-    // In production, set CLIENT_URL in your .env for security
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      const allowedOrigins = (process.env.CLIENT_URL || '').split(',');
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
